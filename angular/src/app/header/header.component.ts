@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+// import { Component, EventEmitter, OnInit, Output } from '@angular/core'; // Related to first navigation approach
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -8,15 +9,16 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 export class HeaderComponent implements OnInit {
   
   collapsed = true;
-  @Output() featureSelected = new EventEmitter<string>();
+  // @Output() featureSelected = new EventEmitter<string>(); // Related to first navigation approach
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  onSelect(feature: string) {
-    this.featureSelected.emit(feature)
-  }
+  // Related to first navigation approach
+  // onSelect(feature: string) {
+  //   this.featureSelected.emit(feature)
+  // }
 
 }
