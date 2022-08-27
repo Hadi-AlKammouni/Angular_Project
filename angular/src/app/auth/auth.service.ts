@@ -4,13 +4,14 @@ import { env } from "env";
 import { throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-interface AuthResounseData {
+export interface AuthResounseData {
     kind: string,
     idToken: string,
     email: string,
     refreshToken: string,
     expiresIn: string,
     localId: string,
+    registered?: boolean,
 }
 
 @Injectable({providedIn: 'root'})
@@ -35,6 +36,16 @@ export class AuthService {
             }
             return throwError(errorMessage)
         }))
+    }
+
+    login(email: string, password: string) {
+        return this.http.post<AuthResounseData>(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.Firebase_KEY}`,
+        {
+            email: email,
+            password: password,
+            retunSecureToken: true,
+        })
+
     }
 
 }
