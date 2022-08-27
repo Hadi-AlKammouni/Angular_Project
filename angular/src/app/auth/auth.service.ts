@@ -1,8 +1,9 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { env } from "env";
-import { throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { Subject, throwError } from "rxjs";
+import { catchError, tap } from "rxjs/operators";
+import { User } from "./user.model";
 
 export interface AuthResounseData {
     kind: string,
@@ -17,6 +18,8 @@ export interface AuthResounseData {
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
+    user = new Subject<User>()
+
     constructor(private http: HttpClient) {}
 
     signUp(email: string, password: string) {
@@ -25,7 +28,9 @@ export class AuthService {
             email: email,
             password: password,
             retunSecureToken: true,
-        }).pipe(catchError(this.handleError))
+        }).pipe(catchError(this.handleError), tap(responseData => {
+            this.handleAuthetication(responseData.email, responseData.localId, responseData.idToken, +responseData.expiresIn)
+        }))
     }
 
     login(email: string, password: string) {
@@ -55,6 +60,12 @@ export class AuthService {
                 break
         }
         return throwError(errorMessage)
+    }
+
+    private handleAuthetication(email: string, userId: string, token:string, expiresIn: number) {
+        const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000)
+        const user = new User(email, userId, token, expirationDate)
+        this.user.next(user)
     }
 
 }
